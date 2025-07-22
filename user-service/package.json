@@ -4,6 +4,7 @@
     "start:dev": "nest start --watch"
   },
   "devDependencies": {
+    "@types/node": "^24.0.15",
     "prisma": "^6.11.1"
   },
   "dependencies": {
