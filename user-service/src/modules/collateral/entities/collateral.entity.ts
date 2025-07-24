@@ -1,17 +1,20 @@
+import { Decimal } from '@prisma/client/runtime/library';
+import { CollateralType, CollateralStatus } from '@prisma/client';
+
 export class Collateral {
   id: string;
-  type: string;
+  type: CollateralType;
   description: string;
-  weight?: number;
-  purity?: number;
-  estimatedValue: number;
-  currentValue: number;
+  weight?: Decimal;
+  purity?: Decimal;
+  estimatedValue: Decimal;
+  currentValue: Decimal;
   appraisalDate: Date;
   appraisedBy?: string;
   photos?: any;
   certificates?: any;
   storageLocation?: string;
-  status: string;
+  status: CollateralStatus;
   createdAt: Date;
   updatedAt: Date;
   loans?: any[];
