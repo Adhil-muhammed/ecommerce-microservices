@@ -10,7 +10,7 @@ import {
 import { CollateralService } from "./collateral.service";
 import { CreateCollateralDto } from "./dto/create-collateral.dto";
 import { UpdateCollateralDto } from "./dto/update-collateral.dto";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiTags, ApiBody } from "@nestjs/swagger";
 
 @ApiTags("collateral")
 @Controller("collateral")
@@ -18,6 +18,7 @@ export class CollateralController {
   constructor(private readonly collateralService: CollateralService) {}
 
   @Post()
+  @ApiBody({ type: CreateCollateralDto })
   create(@Body() createCollateralDto: CreateCollateralDto) {
     return this.collateralService.create(createCollateralDto);
   }
@@ -33,6 +34,7 @@ export class CollateralController {
   }
 
   @Patch(":id")
+  @ApiBody({ type: UpdateCollateralDto })
   update(
     @Param("id") id: string,
     @Body() updateCollateralDto: UpdateCollateralDto
