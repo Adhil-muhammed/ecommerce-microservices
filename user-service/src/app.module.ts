@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { AppController } from "./app.controller";
 import { PrismaService } from "../prisma/prisma.service";
+import { AuthModule} from "./modules/auth/auth.module";
 import { UserModule } from "./modules/user/user.module";
 import { CollateralModule } from "./modules/collateral/collateral.module";
 
@@ -12,6 +13,7 @@ import { CollateralModule } from "./modules/collateral/collateral.module";
       envFilePath: ".env",
     }),
     UserModule,
+    AuthModule,
     CollateralModule,
   ],
   controllers: [AppController],
