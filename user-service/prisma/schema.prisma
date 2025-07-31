@@ -20,14 +20,96 @@ model User {
   documents   Json?      // KYC documents
   creditScore Int?
   status      UserStatus @default(ACTIVE)
+
+   // Authentication fields
+  passwordHash    String?
+  emailVerified   Boolean    @default(false)
+  phoneVerified   Boolean    @default(false)
+  twoFactorEnabled Boolean   @default(false)
+  twoFactorSecret String?
+
+  // Metadata
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+
+   // Security & Compliance
+  kycStatus       KYCStatus  @default(NOT_STARTED)
+  kycSubmittedAt  DateTime?
+  kycVerifiedAt   DateTime?
+  lastLoginAt     DateTime?
+  loginAttempts   Int        @default(0)
+  lockedUntil     DateTime?
 
   // Relations
   loans       Loan[]
   payments    Payment[]
+  sessions        UserSession[]
+  otpCodes        OTPCode[]
+  auditLogs       AuditLog[]
+  refreshTokens   RefreshToken[]
 
   @@map("users")
+}
+
+// Session Management
+model UserSession {
+  id          String    @id @default(cuid())
+  userId      String
+  sessionToken String   @unique
+  deviceInfo  Json?     // Browser, OS, IP, etc.
+  ipAddress   String?
+  userAgent   String?
+  isActive    Boolean   @default(true)
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
+  lastUsedAt  DateTime  @default(now())
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_sessions")
+}
+
+// JWT Refresh Tokens
+model RefreshToken {
+  id        String    @id @default(cuid())
+  userId    String
+  token     String    @unique
+  expiresAt DateTime
+  revoked   Boolean   @default(false)
+  createdAt DateTime  @default(now())
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+// OTP Management for 2FA and verification
+model OTPCode {
+  id          String    @id @default(cuid())
+  userId      String
+  code        String
+  type        OTPType
+  purpose     String?   // LOGIN, PASSWORD_RESET, EMAIL_VERIFY, etc.
+  isUsed      Boolean   @default(false)
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
+  usedAt      DateTime?
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("otp_codes")
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  email     String
+  token     String    @unique
+  expiresAt DateTime
+  used      Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  usedAt    DateTime?
+
+  @@map("password_reset_tokens")
 }
 
 // Collateral Management
